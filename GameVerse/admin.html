@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameVerse – Адмін Панель</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="admin.js"></script>
+</head>
+<body>
+  <header class="hero small">
+    <h1>Адмін Панель</h1>
+    <p class="subtitle">Додати, редагувати або видалити ігри</p>
+  </header>
+
+  <section class="admin-section">
+    <h2>➕ Додати Гру</h2>
+    <form id="gameForm">
+      <input type="text" id="title" placeholder="Назва гри" required>
+      <input type="text" id="description" placeholder="Опис" required>
+      <input type="text" id="url" placeholder="Посилання на гру" required>
+      <select id="category">
+        <option value="arcade">Аркада</option>
+        <option value="logic">Головоломка</option>
+        <option value="retro">Ретро</option>
+      </select>
+      <button type="submit">Додати гру</button>
+    </form>
+
+    <h2>🛠 Редагування Ігор</h2>
+    <div id="adminGames" class="game-grid"></div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 GameVerse. Панель адміністратора</p>
+  </footer>
+</body>
+</html>

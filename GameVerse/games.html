@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameVerse – Ігри</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="games.js"></script>
+</head>
+<body>
+  <header class="hero small">
+    <h1>Ігрова Бібліотека</h1>
+    <p class="subtitle">Знайди свою улюблену гру або відкрий щось нове!</p>
+  </header>
+
+  <section class="filters">
+    <input type="text" id="searchInput" placeholder="Пошук гри...">
+    <select id="categoryFilter">
+      <option value="all">Усі категорії</option>
+      <option value="arcade">Аркади</option>
+      <option value="logic">Головоломки</option>
+      <option value="retro">Ретро</option>
+    </select>
+  </section>
+
+  <section class="top-games">
+    <h2>🏆 Топові Ігри</h2>
+    <div id="topGames" class="game-grid"></div>
+  </section>
+
+  <section class="all-games">
+    <h2>🎮 Усі Ігри</h2>
+    <div id="allGames" class="game-grid"></div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 GameVerse. Усі права захищено.</p>
+  </footer>
+</body>
+</html>

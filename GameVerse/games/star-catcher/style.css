@@ -1,0 +1,88 @@
+body {
+  margin: 0;
+  background: linear-gradient(to top, #0f0c29, #302b63);
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+  text-align: center;
+}
+
+#game-container {
+  padding: 20px;
+}
+
+.instructions {
+  font-size: 14px;
+  color: #ccc;
+}
+
+#score {
+  font-size: 18px;
+  color: #0ff;
+  margin-bottom: 10px;
+}
+
+#game-area {
+  width: 100%;
+  max-width: 600px;
+  height: 400px;
+  margin: 0 auto;
+  background: #10101a;
+  border: 2px solid #0ff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px #0ff;
+  border-radius: 10px;
+}
+
+.star {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, rgba(252, 255, 74, 0.982), #fff27eb7);
+  border-radius: 50%;
+  box-shadow: 0 0 15px 5px rgb(255, 242, 0);
+  animation: fall linear;
+}
+
+@keyframes fall {
+  0% { top: -30px; }
+  100% { top: 400px; }
+}
+
+#hedgehog {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    background: url('hedgehog-stars.png') no-repeat center/contain;
+}
+
+#grass {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: linear-gradient(to top, #228B22, #00ff88);
+  box-shadow: 0 0 15px #00ff88 inset;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  background: #0ff;
+  color: #000;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #0ff;
+  transition: transform 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}

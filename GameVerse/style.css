@@ -1,0 +1,86 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f0f1b;
+  color: #f2f2f2;
+  overflow-x: hidden;
+}
+
+header.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background: linear-gradient(135deg, #1f1f2e, #3c3c70);
+  animation: fadeIn 2s ease;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5em;
+  color: #00fff7;
+  text-shadow: 0 0 10px #00fff7;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 1.5em;
+  color: #ccc;
+}
+
+.cta {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #00fff7;
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.cta:hover {
+  transform: scale(1.1);
+}
+
+section.game-section {
+  padding: 60px 20px;
+  text-align: center;
+  background: #1a1a2e;
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.game-card {
+  background: #2d2d44;
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 10px rgba(0,255,247,0.2);
+}
+
+.game-card:hover {
+  transform: translateY(-8px);
+}
+
+footer {
+  padding: 20px;
+  background: #0f0f1b;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
