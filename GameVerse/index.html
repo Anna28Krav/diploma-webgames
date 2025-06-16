@@ -4,11 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GameVerse</title>
-  <base href="/diploma-webgames/GameVerse/">
   <link rel="stylesheet" href="style.css" />
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js"></script>
   <script defer src="main.js"></script>
+  <script defer src="firebase-config.js"></script>
 </head>
 <body>
+  <!-- 🔒 Іконка входу адміністратора -->
+  <div id="adminLoginBtn" title="Увійти як адміністратор" style="
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 32px;
+    cursor: pointer;
+    color: #00fff7;
+    text-shadow: 0 0 5px #00fff7;">🔒</div>
+
   <header class="hero">
     <h1>GameVerse</h1>
     <p class="subtitle">Занурся у світ браузерних ігор!</p>
@@ -23,7 +36,46 @@
   </section>
 
   <footer>
-    <p>&copy; 2025 GameVerse. Усі права захищено.</p>
+    <p>&copy; 2025 Kravchenko Anna. Усі права захищені.</p>
   </footer>
+
+  <!-- Авторизація Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js";
+    import { firebaseConfig } from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
+
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+
+    adminLoginBtn.addEventListener('click', async () => {
+      const provider = new GoogleAuthProvider();
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Заміни на свою пошту або зроби перевірку по claims
+        const adminEmail = "anna611552@gmail.com";
+        if (user.email === adminEmail) {
+          alert("Ви увійшли як адміністратор.");
+          window.location.href = "admin.html";
+        } else {
+          await addDoc(collection(db, "adminRequests"), {
+            email: user.email,
+            timestamp: new Date().toISOString()
+          });
+          alert("Ваш запит на адміністрування відправлено. Очікуйте підтвердження.");
+          await signOut(auth);
+        }
+      } catch (error) {
+        console.error("Помилка входу:", error);
+        alert("Помилка авторизації. Спробуйте ще раз.");
+      }
+    });
+  </script>
 </body>
 </html>
