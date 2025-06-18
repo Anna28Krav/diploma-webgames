@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super Mario Classic</title>
+  <style>
+    body {
+      margin: 0;
+      background: skyblue;
+      overflow: auto;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: linear-gradient(skyblue, white);
+    }
+    #ui {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-family: monospace;
+      color: black;
+      text-shadow: 1px 1px white;
+      background: rgba(255,255,255,0.7);
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    Рівень:
+    <select id="levelSelect">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+  </div>
+  <canvas id="gameCanvas" width="1600" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const levelSelect = document.getElementById("levelSelect");
+
+    const marioImg = new Image();
+    marioImg.src = "images/mario.png";
+
+    const princessImg = new Image();
+    princessImg.src = "images/princess.png";
+
+    const mushroomImg = new Image();
+    mushroomImg.src = "images/mushroom.png";
+
+    const enemyImg = new Image();
+    enemyImg.src = "images/enemy.png";
+
+    let level = 1;
+
+    const mario = {
+      x: 100,
+      y: 300,
+      width: 30,
+      height: 40,
+      vy: 0,
+      jumpPower: -10,
+      gravity: 0.5,
+      onGround: true
+    };
+
+    const princess = {
+      x: 1500,
+      y: 300,
+      width: 30,
+      height: 40
+    };
+
+    let mushrooms = [];
+    let enemies = [];
+    let platforms = [];
+    let explosions = [];
+    const groundY = 340;
+    let keys = {};
+    let jumpKeyReleased = true;
+
+    function setLevel(lvl) {
+      level = lvl;
+      mario.x = 100;
+      mario.y = 300;
+      princess.x = 1200 + lvl * 100;
+
+      canvas.width = 1600;
+princess.x = 1200 + lvl * 50;
+if (princess.x > canvas.width - 50) princess.x = canvas.width - 50;
+
+
+      enemies = [];
+      platforms = [
+        { x: 0, y: groundY, width: canvas.width, height: 60 },
+        { x: 300, y: 260, width: 100, height: 10 },
+        { x: 500, y: 220, width: 100, height: 10 }
+      ];
+
+      mushrooms = [];
+      for (let i = 0; i < lvl + 1; i++) {
+        mushrooms.push({ x: 200 + i * 160, y: 310, width: 20, height: 20 });
+      }
+
+      for (let i = 0; i < lvl + 2; i++) {
+        enemies.push({ x: 500 + i * 200, y: 310, width: 30, height: 30, dir: -1, speed: 1 + lvl * 0.2 });
+      }
+    }
+
+    levelSelect.addEventListener("change", e => {
+      const selected = parseInt(e.target.value);
+      setLevel(selected);
+    });
+
+    document.addEventListener("keydown", e => keys[e.key] = true);
+    document.addEventListener("keyup", e => keys[e.key] = false);
+
+    function drawImageObject(img, obj) {
+      ctx.drawImage(img, obj.x, obj.y, obj.width, obj.height);
+    }
+
+    function drawPlatforms() {
+      ctx.fillStyle = "green";
+      platforms.forEach(p => ctx.fillRect(p.x, p.y, p.width, p.height));
+    }
+
+    function drawMushrooms() {
+      mushrooms.forEach(m => drawImageObject(mushroomImg, m));
+    }
+
+    function drawEnemies() {
+      enemies.forEach(e => drawImageObject(enemyImg, e));
+    }
+
+    function drawExplosions() {
+      explosions.forEach((ex, i) => {
+        ctx.beginPath();
+        ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "yellow";
+        ctx.fill();
+        ex.radius += 1;
+        ex.opacity -= 0.05;
+        if (ex.opacity <= 0) explosions.splice(i, 1);
+      });
+    }
+
+    function updateMario() {
+      if (keys["ArrowLeft"]) mario.x -= 3;
+      if (keys["ArrowRight"]) mario.x += 3;
+
+      if ((keys[" "] || keys["ArrowUp"]) && mario.onGround && jumpKeyReleased) {
+        mario.vy = mario.jumpPower;
+        mario.onGround = false;
+        jumpKeyReleased = false;
+      }
+
+      if (!keys[" "] && !keys["ArrowUp"]) jumpKeyReleased = true;
+
+      mario.vy += mario.gravity;
+      mario.y += mario.vy;
+
+      mario.onGround = false;
+      platforms.forEach(p => {
+        if (
+          mario.x < p.x + p.width &&
+          mario.x + mario.width > p.x &&
+          mario.y + mario.height < p.y + 10 &&
+          mario.y + mario.height + mario.vy >= p.y
+        ) {
+          mario.y = p.y - mario.height;
+          mario.vy = 0;
+          mario.onGround = true;
+        }
+      });
+
+      if (mario.y > canvas.height) {
+        mario.y = 300;
+        mario.vy = 0;
+        mario.x = 100;
+      }
+    }
+
+    function updateEnemies() {
+      enemies.forEach(e => {
+        e.x += e.dir * e.speed;
+        if (e.x < 0 || e.x + e.width > canvas.width) e.dir *= -1;
+      });
+    }
+
+    function checkCollisions() {
+      mushrooms.forEach((m, i) => {
+        if (mario.x < m.x + m.width && mario.x + mario.width > m.x &&
+            mario.y < m.y + m.height && mario.y + mario.height > m.y) {
+          mushrooms.splice(i, 1);
+        }
+      });
+
+      enemies.forEach((e, i) => {
+        const hit =
+          mario.x < e.x + e.width &&
+          mario.x + mario.width > e.x &&
+          mario.y < e.y + e.height &&
+          mario.y + mario.height > e.y;
+
+        if (hit) {
+          const isFromAbove = mario.vy > 0 && mario.y + mario.height - e.y < 10;
+
+          if (isFromAbove) {
+            explosions.push({ x: e.x + e.width / 2, y: e.y + e.height / 2, radius: 5, opacity: 1 });
+            enemies.splice(i, 1);
+            mario.vy = mario.jumpPower / 2;
+          } else {
+            mario.x = 100;
+            mario.y = 300;
+          }
+        }
+      });
+    }
+
+    function checkWin() {
+      if (mario.x + mario.width > princess.x && mario.x < princess.x + princess.width &&
+          mario.y + mario.height > princess.y && mario.y < princess.y + princess.height) {
+        alert("🎉 Ти врятував принцесу на рівні " + level + "!");
+        mario.x = 100;
+        mario.y = 300;
+      }
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      updateMario();
+      updateEnemies();
+      checkCollisions();
+      checkWin();
+      drawPlatforms();
+      drawMushrooms();
+      drawEnemies();
+      drawExplosions();
+      drawImageObject(marioImg, mario);
+      drawImageObject(princessImg, princess);
+      requestAnimationFrame(gameLoop);
+    }
+
+    setLevel(1);
+    gameLoop();
+  </script>
+</body>
+</html>

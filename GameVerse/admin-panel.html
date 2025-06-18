@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Адмін-панель</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { firebaseConfig } from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const table = document.getElementById("requestsTable");
+
+    async function loadRequests() {
+      const snapshot = await getDocs(collection(db, "admin_requests"));
+      table.innerHTML = "<tr><th>Email</th><th>Дата запиту</th><th>Дія</th></tr>";
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${data.email}</td>
+          <td>${new Date(data.requestedAt).toLocaleString()}</td>
+          <td>
+            <button onclick="approve('${data.email}', '${docSnap.id}')">✅ Схвалити</button>
+            <button onclick="decline('${docSnap.id}')">❌ Відхилити</button>
+          </td>`;
+        table.appendChild(tr);
+      });
+    }
+
+    window.approve = async function(email, requestId) {
+      alert(`Адміністратора з email ${email} потрібно додати через Firebase Console вручну.`);
+      await deleteDoc(doc(db, "admin_requests", requestId));
+      loadRequests();
+    }
+
+    window.decline = async function(requestId) {
+      await deleteDoc(doc(db, "admin_requests", requestId));
+      loadRequests();
+    }
+
+    loadRequests();
+  </script>
+  <style>
+    body { font-family: Arial; background: #111; color: white; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #555; padding: 8px; text-align: left; }
+    th { background-color: #222; }
+    button { margin: 2px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>📋 Запити на адміністрування</h1>
+  <table id="requestsTable">
+    <tr><th>Email</th><th>Дата запиту</th><th>Дія</th></tr>
+  </table>
+</body>
+</html>

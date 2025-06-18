@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GameVerse</title>
+  <base href="/diploma-webgames/GameVerse/">
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="main.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <h1>GameVerse</h1>
+    <p class="subtitle">Занурся у світ браузерних ігор!</p>
+    <a href="games.html" class="cta">Перейти до ігор</a>
+  </header>
+
+  <section id="games" class="game-section">
+    <h2>🏆 Топові Ігри</h2>
+    <div class="game-grid" id="topGamesHome">
+      <!-- Тут будуть топові ігри за лайками -->
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 GameVerse. Усі права захищено.</p>
+  </footer>
+</body>
+</html>

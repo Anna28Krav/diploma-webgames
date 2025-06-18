@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -9,18 +10,23 @@
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js"></script>
   <script defer src="main.js"></script>
-  <script defer src="firebase-config.js"></script>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="admin-login.js"></script>
+  <style>
+    #adminLoginBtn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 32px;
+      cursor: pointer;
+      color: #00fff7;
+      text-shadow: 0 0 5px #00fff7;
+    }
+  </style>
 </head>
 <body>
   <!-- 🔒 Іконка входу адміністратора -->
-  <div id="adminLoginBtn" title="Увійти як адміністратор" style="
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 32px;
-    cursor: pointer;
-    color: #00fff7;
-    text-shadow: 0 0 5px #00fff7;">🔒</div>
+  <div id="adminLoginBtn" title="Увійти як адміністратор">🔒</div>
 
   <header class="hero">
     <h1>GameVerse</h1>
@@ -28,18 +34,17 @@
     <a href="games.html" class="cta">Перейти до ігор</a>
   </header>
 
-  <section id="games" class="game-section">
-    <h2>🏆 Топові Ігри</h2>
-    <div class="game-grid" id="topGamesHome">
-      <!-- Тут будуть топові ігри за лайками -->
-    </div>
-  </section>
+  <section class="top-games">
+  <h2>🏆 Топові Ігри</h2>
+  <div class="game-grid top"></div>
+</section>
+
 
   <footer>
     <p>&copy; 2025 Kravchenko Anna. Усі права захищені.</p>
   </footer>
 
-  <!-- Авторизація Firebase -->
+  <!-- Firebase авторизація -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -51,29 +56,30 @@
     const db = getFirestore();
 
     const adminLoginBtn = document.getElementById('adminLoginBtn');
+    console.log("Іконка знайдена:", adminLoginBtn);
 
-    adminLoginBtn.addEventListener('click', async () => {
+    adminLoginBtn?.addEventListener('click', async () => {
+      console.log("🔒 Клік спрацював");
       const provider = new GoogleAuthProvider();
       try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
-        // Заміни на свою пошту або зроби перевірку по claims
-        const adminEmail = "anna611552@gmail.com";
-        if (user.email === adminEmail) {
+        if (user.email === "ann611552@gmail.com") {
           alert("Ви увійшли як адміністратор.");
           window.location.href = "admin.html";
         } else {
           await addDoc(collection(db, "adminRequests"), {
             email: user.email,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            status: "очікує"
           });
-          alert("Ваш запит на адміністрування відправлено. Очікуйте підтвердження.");
+          alert("Ваш запит на адміністрування відправлено. Ми зв’яжемось з вами після підтвердження.");
           await signOut(auth);
         }
       } catch (error) {
         console.error("Помилка входу:", error);
-        alert("Помилка авторизації. Спробуйте ще раз.");
+        alert("Помилка авторизації: " + error.message);
       }
     });
   </script>

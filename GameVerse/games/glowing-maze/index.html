@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glowing Maze</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #0ff;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 32px;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    }
+
+    canvas {
+      display: block;
+      margin: 20px auto;
+      border: 2px solid #0ff;
+      background-color: #111;
+      box-shadow: 0 0 20px #0ff;
+      border-radius: 10px;
+    }
+
+    .controls {
+      margin-top: 10px;
+    }
+
+    .controls button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #0ff;
+      background-color: #111;
+      border: 1px solid #0ff;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0ff;
+    }
+
+    .controls span {
+      display: inline-block;
+      margin-left: 20px;
+      font-size: 18px;
+      color: #0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Светящийся лабиринт</h1>
+
+  <div class="controls">
+    <button onclick="setDifficulty('easy')">Легко</button>
+    <button onclick="setDifficulty('medium')">Средне</button>
+    <button onclick="setDifficulty('hard')">Сложно</button>
+    <span id="timer">⏱ Время: 0.0 сек</span>
+  </div>
+
+  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <script src="script.js"></script>
+</body>
+</html>

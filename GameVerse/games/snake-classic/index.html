@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Змійка</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      color: white;
+      font-family: monospace;
+    }
+    h1 {
+      color: lime;
+      text-shadow: 0 0 10px lime, 0 0 20px lime;
+      animation: glow 2s infinite alternate;
+      margin: 20px 0 10px;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px lime; }
+      to { text-shadow: 0 0 20px lime; }
+    }
+    canvas {
+      background: #222;
+      border: 2px solid #0f0;
+    }
+  </style>
+</head>
+<body>
+<h1>ЗМІЙКА</h1>
+<canvas id="gameCanvas" width="400" height="400"></canvas>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const gridSize = 20;
+let snake = [{ x: 9, y: 9 }];
+let direction = { x: 0, y: 0 };
+let food = spawnFood();
+let score = 0;
+
+function spawnFood() {
+  return {
+    x: Math.floor(Math.random() * (canvas.width / gridSize)),
+    y: Math.floor(Math.random() * (canvas.height / gridSize))
+  };
+}
+
+function draw() {
+  ctx.fillStyle = '#222';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw food
+  ctx.fillStyle = 'red';
+  ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+
+  // Draw snake
+  ctx.fillStyle = 'lime';
+  snake.forEach(segment => {
+    ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+  });
+
+  // Draw score
+  ctx.fillStyle = 'white';
+  ctx.fillText("Очки: " + score, 10, 20);
+}
+
+function update() {
+  if (direction.x === 0 && direction.y === 0) return; // Не рухаємось — не оновлюємо
+
+  const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+  // wrap around
+  if (head.x < 0) head.x = canvas.width / gridSize - 1;
+  if (head.x >= canvas.width / gridSize) head.x = 0;
+  if (head.y < 0) head.y = canvas.height / gridSize - 1;
+  if (head.y >= canvas.height / gridSize) head.y = 0;
+
+  // check collision with self
+  if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+    alert("Гра закінчена! Очки: " + score);
+    snake = [{ x: 9, y: 9 }];
+    direction = { x: 0, y: 0 };
+    food = spawnFood();
+    score = 0;
+    return;
+  }
+
+  snake.unshift(head);
+
+  if (head.x === food.x && head.y === food.y) {
+    score++;
+    food = spawnFood();
+  } else {
+    snake.pop();
+  }
+}
+
+function gameLoop() {
+  update();
+  draw();
+}
+
+setInterval(gameLoop, 150);
+
+// controls
+window.addEventListener('keydown', e => {
+  switch (e.key) {
+    case 'ArrowUp': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
+    case 'ArrowDown': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
+    case 'ArrowLeft': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
+    case 'ArrowRight': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
+  }
+});
+</script>
+</body>
+</html>

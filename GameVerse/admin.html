@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GameVerse – Адмін Панель</title>
-  <base href="/diploma-webgames/GameVerse/">
   <link rel="stylesheet" href="style.css">
   <script defer src="admin.js"></script>
 </head>
@@ -20,6 +19,11 @@
       <input type="text" id="title" placeholder="Назва гри" required>
       <input type="text" id="description" placeholder="Опис" required>
       <input type="text" id="url" placeholder="Посилання на гру" required>
+      
+      <!-- ДОДАНО: поле для заставки гри -->
+      <label for="cover">Завантажити заставку гри:</label>
+      <input type="file" id="cover" accept="image/*" required>
+
       <select id="category">
         <option value="arcade">Аркада</option>
         <option value="logic">Головоломка</option>
@@ -33,7 +37,7 @@
   </section>
 
   <footer>
-    <p>&copy; 2025 GameVerse. Панель адміністратора</p>
+    <p>&copy; 2025 Kravchenko Anna. Панель адміністратора</p>
   </footer>
 </body>
 </html>

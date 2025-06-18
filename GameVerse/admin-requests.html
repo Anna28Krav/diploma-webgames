@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GameVerse – Заявки адміністраторів</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <script type="module" src="firebase-config.js"></script>
+  <style>
+    body {
+      background: #0f0f1b;
+      color: #f2f2f2;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+    }
+    h1 {
+      color: #00fff7;
+      text-shadow: 0 0 10px #00fff7;
+    }
+    .request {
+      background: #1a1a2e;
+      margin: 12px 0;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px #00fff7;
+    }
+    .request button {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Заявки на адміністрування</h1>
+  <div id="requestList">Завантаження...</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { firebaseConfig } from './firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore();
+
+    const requestList = document.getElementById("requestList");
+
+    async function loadRequests() {
+      requestList.innerHTML = "";
+      const snapshot = await getDocs(collection(db, "adminRequests"));
+      if (snapshot.empty) {
+        requestList.textContent = "Немає заявок.";
+        return;
+      }
+
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "request";
+        div.innerHTML = `
+          <strong>${data.email}</strong><br>
+          Статус: ${data.status}<br>
+          <button onclick="approve('${docSnap.id}')">✅ Підтвердити</button>
+          <button onclick="reject('${docSnap.id}')">❌ Відхилити</button>
+        `;
+        requestList.appendChild(div);
+      });
+    }
+
+    window.approve = async (id) => {
+      await updateDoc(doc(db, "adminRequests", id), { status: "підтверджено" });
+      alert("Запит підтверджено.");
+      loadRequests();
+    };
+
+    window.reject = async (id) => {
+      await updateDoc(doc(db, "adminRequests", id), { status: "відхилено" });
+      alert("Запит відхилено.");
+      loadRequests();
+    };
+
+    loadRequests();
+  </script>
+</body>
+</html>
