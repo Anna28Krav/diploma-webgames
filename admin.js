@@ -1,12 +1,10 @@
-// Отримати список ігор з localStorage
 let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
+let currentCover = null; // Зберігати стару заставку
 
-// Зберегти в localStorage
 function saveGames() {
   localStorage.setItem("adminGames", JSON.stringify(adminGames));
 }
 
-// Відобразити ігри
 function renderAdminGames() {
   const container = document.getElementById("adminGames");
   container.innerHTML = "";
@@ -34,59 +32,56 @@ function renderAdminGames() {
   });
 }
 
-// Редагування гри
 function editGame(index) {
   const game = adminGames[index];
   document.getElementById("title").value = game.title;
   document.getElementById("description").value = game.description;
   document.getElementById("url").value = game.url;
   document.getElementById("category").value = game.category;
-  deleteGame(index); // Видалити стару версію для оновлення
+  currentCover = game.cover; // зберегти стару заставку
+  deleteGame(index);
 }
 
-// Видалення гри
 function deleteGame(index) {
   adminGames.splice(index, 1);
   saveGames();
   renderAdminGames();
 }
 
-// Додавання гри через форму
 function handleFormSubmit(e) {
   e.preventDefault();
-
   const coverFile = document.getElementById("cover").files[0];
 
-  if (!coverFile) {
-    alert("Оберіть заставку гри!");
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = function () {
-    const coverDataURL = reader.result;
-
-    const newGame = {
-      title: document.getElementById("title").value.trim(),
-      description: document.getElementById("description").value.trim(),
-      url: document.getElementById("url").value.trim(),
-      category: document.getElementById("category").value,
-      cover: coverDataURL, // base64 заставка
-      likes: 0
+  if (coverFile) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const coverDataURL = reader.result;
+      createAndSaveGame(coverDataURL);
     };
-
-    adminGames.push(newGame);
-    saveGames();
-    renderAdminGames();
-    e.target.reset(); // Очистити форму
-  };
-
-  reader.readAsDataURL(coverFile); // Прочитати файл заставки
+    reader.readAsDataURL(coverFile);
+  } else if (currentCover) {
+    createAndSaveGame(currentCover);
+  } else {
+    alert("Оберіть заставку гри!");
+  }
 }
 
-// Прив'язка обробника події
-document.getElementById("gameForm").addEventListener("submit", handleFormSubmit);
+function createAndSaveGame(cover) {
+  const newGame = {
+    title: document.getElementById("title").value.trim(),
+    description: document.getElementById("description").value.trim(),
+    url: document.getElementById("url").value.trim(),
+    category: document.getElementById("category").value,
+    cover: cover,
+    likes: 0
+  };
 
-// Відобразити ігри на старті
+  adminGames.push(newGame);
+  saveGames();
+  renderAdminGames();
+  document.getElementById("gameForm").reset();
+  currentCover = null;
+}
+
+document.getElementById("gameForm").addEventListener("submit", handleFormSubmit);
 renderAdminGames();
