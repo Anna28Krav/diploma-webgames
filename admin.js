@@ -55,7 +55,7 @@ function deleteGame(index) {
 function handleFormSubmit(e) {
   e.preventDefault();
 
-  const coverFile = document.getElementById("cover").files[0];
+  const coverName = document.getElementById("cover").value;
 
   if (!coverFile) {
     alert("Оберіть заставку гри!");
@@ -72,7 +72,7 @@ function handleFormSubmit(e) {
       description: document.getElementById("description").value.trim(),
       url: document.getElementById("url").value.trim(),
       category: document.getElementById("category").value,
-      cover: document.getElementById("cover").value,
+      cover: coverName,
       likes: 0
     };
 
