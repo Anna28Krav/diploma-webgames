@@ -1,3 +1,4 @@
+// script.js
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -8,14 +9,20 @@ const CELL_SIZE = 40;
 let player, goal, grid, startTime, timerInterval;
 let keys = {};
 
+// Клавіатура
 document.addEventListener("keydown", (e) => keys[e.key] = true);
 document.addEventListener("keyup", (e) => keys[e.key] = false);
 
+// Для мобільних стрілок
+function pressKey(key) {
+  keys[key] = true;
+  setTimeout(() => { keys = {}; }, 100);
+}
+
+// Сенсор
 canvas.addEventListener("touchstart", handleTouchStart);
 canvas.addEventListener("touchend", handleTouchEnd);
-
-let touchStartX = 0;
-let touchStartY = 0;
+let touchStartX = 0, touchStartY = 0;
 
 function handleTouchStart(e) {
   const touch = e.changedTouches[0];
@@ -27,17 +34,11 @@ function handleTouchEnd(e) {
   const touch = e.changedTouches[0];
   const dx = touch.clientX - touchStartX;
   const dy = touch.clientY - touchStartY;
-
   const absX = Math.abs(dx);
   const absY = Math.abs(dy);
 
-  if (absX > absY) {
-    if (dx > 0) keys["ArrowRight"] = true;
-    else keys["ArrowLeft"] = true;
-  } else {
-    if (dy > 0) keys["ArrowDown"] = true;
-    else keys["ArrowUp"] = true;
-  }
+  if (absX > absY) keys[dx > 0 ? "ArrowRight" : "ArrowLeft"] = true;
+  else keys[dy > 0 ? "ArrowDown" : "ArrowUp"] = true;
 
   setTimeout(() => keys = {}, 100);
 }
@@ -49,7 +50,6 @@ class Cell {
     this.walls = { top: true, right: true, bottom: true, left: true };
     this.visited = false;
   }
-
   draw() {
     const x = this.x * CELL_SIZE;
     const y = this.y * CELL_SIZE;
@@ -57,7 +57,6 @@ class Cell {
     ctx.lineWidth = 4;
     ctx.shadowColor = "#f0f";
     ctx.shadowBlur = 15;
-
     if (this.walls.top) drawLine(x, y, x + CELL_SIZE, y);
     if (this.walls.right) drawLine(x + CELL_SIZE, y, x + CELL_SIZE, y + CELL_SIZE);
     if (this.walls.bottom) drawLine(x + CELL_SIZE, y + CELL_SIZE, x, y + CELL_SIZE);
@@ -85,32 +84,28 @@ function generateMaze() {
     }
   }
 
-  let stack = [];
-  let current = grid[0];
+  let stack = [], current = grid[0];
   current.visited = true;
 
   while (true) {
     let neighbors = [];
-    const directions = [
+    const dirs = [
       { dx: 0, dy: -1, wall: "top", opp: "bottom" },
       { dx: 1, dy: 0, wall: "right", opp: "left" },
       { dx: 0, dy: 1, wall: "bottom", opp: "top" },
       { dx: -1, dy: 0, wall: "left", opp: "right" }
     ];
-
-    for (let dir of directions) {
-      const nx = current.x + dir.dx;
-      const ny = current.y + dir.dy;
-      const neighborIndex = index(nx, ny);
-      if (neighborIndex !== -1 && !grid[neighborIndex].visited) {
-        neighbors.push({ neighbor: grid[neighborIndex], dir });
+    for (let d of dirs) {
+      const nx = current.x + d.dx, ny = current.y + d.dy;
+      const ni = index(nx, ny);
+      if (ni !== -1 && !grid[ni].visited) {
+        neighbors.push({ neighbor: grid[ni], d });
       }
     }
-
     if (neighbors.length > 0) {
-      const { neighbor, dir } = neighbors[Math.floor(Math.random() * neighbors.length)];
-      current.walls[dir.wall] = false;
-      neighbor.walls[dir.opp] = false;
+      const { neighbor, d } = neighbors[Math.floor(Math.random() * neighbors.length)];
+      current.walls[d.wall] = false;
+      neighbor.walls[d.opp] = false;
       neighbor.visited = true;
       stack.push(current);
       current = neighbor;
@@ -127,7 +122,6 @@ function setDifficulty(level) {
 
   canvas.width = COLS * CELL_SIZE;
   canvas.height = ROWS * CELL_SIZE;
-
   startNewGame();
 }
 
