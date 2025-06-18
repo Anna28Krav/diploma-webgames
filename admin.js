@@ -57,33 +57,27 @@ function handleFormSubmit(e) {
 
   const coverName = document.getElementById("cover").value;
 
-  if (!coverFile) {
+  if (!coverName) {
     alert("Оберіть заставку гри!");
     return;
   }
 
-  const reader = new FileReader();
-
-  reader.onload = function () {
-    const coverDataURL = reader.result;
-
-    const newGame = {
-      title: document.getElementById("title").value.trim(),
-      description: document.getElementById("description").value.trim(),
-      url: document.getElementById("url").value.trim(),
-      category: document.getElementById("category").value,
-      cover: coverName,
-      likes: 0
-    };
-
-    adminGames.push(newGame);
-    saveGames();
-    renderAdminGames();
-    e.target.reset(); // Очистити форму
+  const newGame = {
+    title: document.getElementById("title").value.trim(),
+    description: document.getElementById("description").value.trim(),
+    url: document.getElementById("url").value.trim(),
+    category: document.getElementById("category").value,
+    cover: coverName,
+    likes: 0
   };
 
-  reader.readAsDataURL(coverFile); // Прочитати файл заставки
+  adminGames.push(newGame);
+  saveGames();
+  renderAdminGames();
+  e.target.reset();
 }
+
+  reader.readAsDataURL(coverFile); // Прочитати файл заставки
 
 // Прив'язка обробника події
 document.getElementById("gameForm").addEventListener("submit", handleFormSubmit);
