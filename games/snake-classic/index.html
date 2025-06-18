@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,109 +14,163 @@
       height: 100vh;
       color: white;
       font-family: monospace;
+      overflow: hidden;
     }
+
     h1 {
       color: lime;
       text-shadow: 0 0 10px lime, 0 0 20px lime;
       animation: glow 2s infinite alternate;
-      margin: 20px 0 10px;
+      margin: 10px 0;
     }
+
     @keyframes glow {
       from { text-shadow: 0 0 5px lime; }
       to { text-shadow: 0 0 20px lime; }
     }
-    canvas {
+
+    #gameCanvas {
       background: #222;
       border: 2px solid #0f0;
+      border-radius: 10px;
+      max-width: 95vw;
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    .touch-controls {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .touch-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .touch-btn {
+      width: 60px;
+      height: 60px;
+      font-size: 28px;
+      border-radius: 12px;
+      border: 2px solid lime;
+      background: #000;
+      color: lime;
+      box-shadow: 0 0 10px lime;
+    }
+
+    .score {
+      font-size: 18px;
+      margin: 5px;
     }
   </style>
 </head>
 <body>
-<h1>ЗМІЙКА</h1>
-<canvas id="gameCanvas" width="400" height="400"></canvas>
-<script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+  <h1>ЗМІЙКА</h1>
+  <div class="score" id="scoreDisplay">Очки: 0</div>
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
 
-const gridSize = 20;
-let snake = [{ x: 9, y: 9 }];
-let direction = { x: 0, y: 0 };
-let food = spawnFood();
-let score = 0;
+  <!-- Кнопки для мобільних -->
+  <div class="touch-controls">
+    <div class="touch-row">
+      <button class="touch-btn" onclick="setDir('up')">⬆️</button>
+    </div>
+    <div class="touch-row">
+      <button class="touch-btn" onclick="setDir('left')">⬅️</button>
+      <button class="touch-btn" onclick="setDir('down')">⬇️</button>
+      <button class="touch-btn" onclick="setDir('right')">➡️</button>
+    </div>
+  </div>
 
-function spawnFood() {
-  return {
-    x: Math.floor(Math.random() * (canvas.width / gridSize)),
-    y: Math.floor(Math.random() * (canvas.height / gridSize))
-  };
-}
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const gridSize = 20;
+    let snake = [{ x: 9, y: 9 }];
+    let direction = { x: 0, y: 0 };
+    let food = spawnFood();
+    let score = 0;
 
-function draw() {
-  ctx.fillStyle = '#222';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+    function spawnFood() {
+      return {
+        x: Math.floor(Math.random() * (canvas.width / gridSize)),
+        y: Math.floor(Math.random() * (canvas.height / gridSize))
+      };
+    }
 
-  // Draw food
-  ctx.fillStyle = 'red';
-  ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+    function draw() {
+      ctx.fillStyle = '#222';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw snake
-  ctx.fillStyle = 'lime';
-  snake.forEach(segment => {
-    ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
-  });
+      ctx.fillStyle = 'red';
+      ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
 
-  // Draw score
-  ctx.fillStyle = 'white';
-  ctx.fillText("Очки: " + score, 10, 20);
-}
+      ctx.fillStyle = 'lime';
+      snake.forEach(segment => {
+        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+      });
+    }
 
-function update() {
-  if (direction.x === 0 && direction.y === 0) return; // Не рухаємось — не оновлюємо
+    function update() {
+      if (direction.x === 0 && direction.y === 0) return;
 
-  const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+      const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-  // wrap around
-  if (head.x < 0) head.x = canvas.width / gridSize - 1;
-  if (head.x >= canvas.width / gridSize) head.x = 0;
-  if (head.y < 0) head.y = canvas.height / gridSize - 1;
-  if (head.y >= canvas.height / gridSize) head.y = 0;
+      // wrap
+      if (head.x < 0) head.x = canvas.width / gridSize - 1;
+      if (head.x >= canvas.width / gridSize) head.x = 0;
+      if (head.y < 0) head.y = canvas.height / gridSize - 1;
+      if (head.y >= canvas.height / gridSize) head.y = 0;
 
-  // check collision with self
-  if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
-    alert("Гра закінчена! Очки: " + score);
-    snake = [{ x: 9, y: 9 }];
-    direction = { x: 0, y: 0 };
-    food = spawnFood();
-    score = 0;
-    return;
-  }
+      // collision
+      if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+        alert("Гра закінчена! Очки: " + score);
+        snake = [{ x: 9, y: 9 }];
+        direction = { x: 0, y: 0 };
+        food = spawnFood();
+        score = 0;
+        document.getElementById("scoreDisplay").textContent = "Очки: 0";
+        return;
+      }
 
-  snake.unshift(head);
+      snake.unshift(head);
 
-  if (head.x === food.x && head.y === food.y) {
-    score++;
-    food = spawnFood();
-  } else {
-    snake.pop();
-  }
-}
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        food = spawnFood();
+        document.getElementById("scoreDisplay").textContent = "Очки: " + score;
+      } else {
+        snake.pop();
+      }
+    }
 
-function gameLoop() {
-  update();
-  draw();
-}
+    function gameLoop() {
+      update();
+      draw();
+    }
 
-setInterval(gameLoop, 150);
+    setInterval(gameLoop, 150);
 
-// controls
-window.addEventListener('keydown', e => {
-  switch (e.key) {
-    case 'ArrowUp': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
-    case 'ArrowDown': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
-    case 'ArrowLeft': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
-    case 'ArrowRight': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
-  }
-});
-</script>
+    // Клавіатура
+    window.addEventListener('keydown', e => {
+      switch (e.key) {
+        case 'ArrowUp': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
+        case 'ArrowDown': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
+        case 'ArrowLeft': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
+        case 'ArrowRight': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
+      }
+    });
+
+    // Для сенсорних кнопок
+    function setDir(dir) {
+      if (dir === "up" && direction.y === 0) direction = { x: 0, y: -1 };
+      if (dir === "down" && direction.y === 0) direction = { x: 0, y: 1 };
+      if (dir === "left" && direction.x === 0) direction = { x: -1, y: 0 };
+      if (dir === "right" && direction.x === 0) direction = { x: 1, y: 0 };
+    }
+  </script>
 </body>
 </html>

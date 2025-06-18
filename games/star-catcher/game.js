@@ -13,7 +13,6 @@ timeDisplay.style.fontSize = "16px";
 timeDisplay.style.margin = "10px";
 timeDisplay.style.color = "#0ff";
 document.getElementById("game-container").insertBefore(timeDisplay, gameArea);
-
 timeDisplay.innerText = "Час: 60";
 
 function startGame() {
@@ -22,7 +21,7 @@ function startGame() {
   scoreEl.innerText = "Очки: 0";
   timeDisplay.innerText = "Час: 60";
   gameArea.querySelectorAll(".star").forEach(star => star.remove());
-  document.addEventListener("mousemove", moveHedgehog);
+  document.addEventListener("mousemove", moveHedgehogMouse);
   gameInterval = setInterval(spawnStar, 800);
   timerInterval = setInterval(() => {
     timeLeft--;
@@ -31,10 +30,22 @@ function startGame() {
   }, 1000);
 }
 
-function moveHedgehog(e) {
+function moveHedgehogMouse(e) {
   const rect = gameArea.getBoundingClientRect();
   const x = e.clientX - rect.left;
-  hedgehog.style.left = `${Math.min(Math.max(x, 30), rect.width - 30)}px`;
+  hedgehog.style.left = `${Math.min(Math.max(x, 30), rect.width - 60)}px`;
+}
+
+// Мобільне керування
+function moveLeft() {
+  const current = parseInt(hedgehog.style.left || "50%");
+  hedgehog.style.left = `${Math.max(0, current - 30)}px`;
+}
+
+function moveRight() {
+  const current = parseInt(hedgehog.style.left || "50%");
+  const gameWidth = gameArea.clientWidth;
+  hedgehog.style.left = `${Math.min(gameWidth - 60, current + 30)}px`;
 }
 
 function spawnStar() {
@@ -42,7 +53,6 @@ function spawnStar() {
   star.className = "star";
   star.style.left = Math.random() * (gameArea.clientWidth - 30) + "px";
   star.style.animationDuration = (2 + Math.random() * 2) + "s";
-
   gameArea.appendChild(star);
 
   const fall = setInterval(() => {
@@ -59,6 +69,7 @@ function spawnStar() {
       star.remove();
       clearInterval(fall);
     }
+
     if (starRect.top > gameArea.getBoundingClientRect().bottom) {
       star.remove();
       clearInterval(fall);
@@ -69,6 +80,6 @@ function spawnStar() {
 function endGame() {
   clearInterval(gameInterval);
   clearInterval(timerInterval);
-  document.removeEventListener("mousemove", moveHedgehog);
+  document.removeEventListener("mousemove", moveHedgehogMouse);
   alert("Гру завершено! Твій рахунок: " + score);
 }

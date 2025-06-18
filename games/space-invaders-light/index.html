@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,21 +11,48 @@
       color: lime;
       font-family: monospace;
       text-align: center;
+      overflow: hidden;
     }
+
     h1 {
       margin: 10px;
       text-shadow: 0 0 10px lime;
     }
+
     #score {
       font-size: 18px;
       margin-bottom: 10px;
       color: yellow;
     }
+
     canvas {
-      display: block;
-      margin: 0 auto;
       background-color: #000;
       box-shadow: 0 0 20px lime;
+      border-radius: 8px;
+      width: 95vw;
+      max-width: 600px;
+      height: auto;
+      aspect-ratio: 3 / 2;
+      image-rendering: pixelated;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-size: 26px;
+      width: 60px;
+      height: 60px;
+      background: black;
+      border: 2px solid lime;
+      color: lime;
+      border-radius: 12px;
+      box-shadow: 0 0 10px lime;
     }
   </style>
 </head>
@@ -33,6 +60,14 @@
   <h1>🛸 Space Invaders Light</h1>
   <div id="score">Очки: 0</div>
   <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+  <!-- Сенсорне керування -->
+  <div class="controls">
+    <button class="btn" onclick="move('left')">⬅️</button>
+    <button class="btn" onclick="shoot()">🔫</button>
+    <button class="btn" onclick="move('right')">➡️</button>
+  </div>
+
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
@@ -52,8 +87,22 @@
     let keys = {};
     let score = 0;
 
+    // Події клавіатури
     document.addEventListener("keydown", (e) => keys[e.key] = true);
     document.addEventListener("keyup", (e) => keys[e.key] = false);
+
+    // Функції для мобільних кнопок
+    function move(dir) {
+      if (dir === "left") player.x -= player.speed * 2;
+      if (dir === "right") player.x += player.speed * 2;
+      player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+    }
+
+    function shoot() {
+      if (player.bullets.length < 5) {
+        player.bullets.push({ x: player.x + player.width / 2, y: player.y });
+      }
+    }
 
     function spawnAlien() {
       const x = Math.random() * (canvas.width - 30);
@@ -93,7 +142,6 @@
     }
 
     function update() {
-      // Гравець
       if (keys["ArrowLeft"]) player.x -= player.speed;
       if (keys["ArrowRight"]) player.x += player.speed;
       player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
@@ -109,7 +157,6 @@
       aliens.forEach(a => a.y += a.speed);
       aliens = aliens.filter(a => a.y < canvas.height);
 
-      // Перевірка влучань
       player.bullets.forEach(b => {
         aliens.forEach(a => {
           if (b.x > a.x && b.x < a.x + a.width && b.y < a.y + a.height && b.y > a.y) {
@@ -134,7 +181,7 @@
     }
 
     function gameLoop() {
-      if (Math.random() < 0.01) spawnAlien();
+      if (Math.random() < 0.02) spawnAlien();
       update();
       draw();
       requestAnimationFrame(gameLoop);

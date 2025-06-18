@@ -3,13 +3,44 @@ const ctx = canvas.getContext("2d");
 
 let COLS = 12;
 let ROWS = 8;
-const CELL_SIZE = 50;
+const CELL_SIZE = 40;
 
 let player, goal, grid, startTime, timerInterval;
 let keys = {};
 
 document.addEventListener("keydown", (e) => keys[e.key] = true);
 document.addEventListener("keyup", (e) => keys[e.key] = false);
+
+canvas.addEventListener("touchstart", handleTouchStart);
+canvas.addEventListener("touchend", handleTouchEnd);
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+function handleTouchStart(e) {
+  const touch = e.changedTouches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+}
+
+function handleTouchEnd(e) {
+  const touch = e.changedTouches[0];
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+
+  const absX = Math.abs(dx);
+  const absY = Math.abs(dy);
+
+  if (absX > absY) {
+    if (dx > 0) keys["ArrowRight"] = true;
+    else keys["ArrowLeft"] = true;
+  } else {
+    if (dy > 0) keys["ArrowDown"] = true;
+    else keys["ArrowUp"] = true;
+  }
+
+  setTimeout(() => keys = {}, 100);
+}
 
 class Cell {
   constructor(x, y) {

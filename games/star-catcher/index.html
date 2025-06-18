@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Star Catcher</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script defer src="game.js"></script>
 </head>
 <body>
@@ -15,6 +15,10 @@
     <div id="game-area">
       <div id="hedgehog"></div>
       <div id="grass"></div>
+    </div>
+    <div class="controls">
+      <button onclick="moveLeft()">⬅️</button>
+      <button onclick="moveRight()">➡️</button>
     </div>
     <button onclick="startGame()">Почати гру</button>
   </div>

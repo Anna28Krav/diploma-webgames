@@ -35,12 +35,12 @@ function endGame() {
 function spawnTarget() {
   const target = document.createElement("div");
   target.className = "target";
-  const size = 40;
+  const size = parseInt(getComputedStyle(target).width);
   const x = Math.random() * (field.clientWidth - size);
   const y = Math.random() * (field.clientHeight - size);
   target.style.left = `${x}px`;
   target.style.top = `${y}px`;
-  
+
   target.onclick = () => {
     score++;
     scoreEl.innerText = "Очки: " + score;
@@ -48,6 +48,7 @@ function spawnTarget() {
   };
 
   field.appendChild(target);
+
   setTimeout(() => {
     if (field.contains(target)) field.removeChild(target);
   }, 1500);
