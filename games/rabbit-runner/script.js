@@ -2,6 +2,7 @@ const rabbit = document.getElementById("rabbit");
 const carrot = document.getElementById("carrot");
 const obstacle = document.getElementById("obstacle");
 const scoreDisplay = document.getElementById("score");
+const jumpBtn = document.getElementById("jumpBtn");
 
 let isJumping = false;
 let score = 0;
@@ -12,40 +13,41 @@ function jump() {
   let position = 0;
 
   const upInterval = setInterval(() => {
-    if (position >= 120) {
+    if (position >= 15) {
       clearInterval(upInterval);
       const downInterval = setInterval(() => {
         if (position <= 0) {
           clearInterval(downInterval);
           isJumping = false;
         } else {
-          position -= 5;
-          rabbit.style.bottom = position + "px";
+          position -= 1;
+          rabbit.style.bottom = position + "vh";
         }
       }, 20);
     } else {
-      position += 5;
-      rabbit.style.bottom = position + "px";
+      position += 1;
+      rabbit.style.bottom = position + "vh";
     }
   }, 20);
 }
 
+// Стрибок клавішею або кнопкою
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space" || e.code === "ArrowUp") jump();
 });
+jumpBtn.addEventListener("click", jump);
 
 function moveItem(item, speed, resetCallback) {
   let left = item.offsetLeft;
   const interval = setInterval(() => {
     left -= speed;
-    if (left < -60) {
+    if (left < -window.innerWidth * 0.1) {
       resetCallback(item);
-      left = game.offsetWidth + Math.random() * 300;
+      left = window.innerWidth + Math.random() * 300;
     }
 
     item.style.left = left + "px";
 
-    // collision with rabbit
     const rabbitRect = rabbit.getBoundingClientRect();
     const itemRect = item.getBoundingClientRect();
 
@@ -67,9 +69,10 @@ function moveItem(item, speed, resetCallback) {
   }, 20);
 }
 
+// Старт руху
 moveItem(carrot, 4, (item) => {
   item.style.left = "100%";
-  item.style.bottom = Math.random() > 0.5 ? "60px" : "0";
+  item.style.bottom = Math.random() > 0.5 ? "10vh" : "0";
 });
 
 moveItem(obstacle, 6, (item) => {

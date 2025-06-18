@@ -34,7 +34,7 @@ function createPipe(x) {
 function updateGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Bird with fuzzy glow
+  // Bird glow
   velocity += gravity;
   bird.y += velocity;
   const gradient = ctx.createRadialGradient(bird.x, bird.y, bird.r * 0.3, bird.x, bird.y, bird.r * 1.5);
@@ -66,7 +66,6 @@ function updateGame() {
     ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
     ctx.fillRect(pipe.x, pipe.bottom, pipe.width, canvas.height - pipe.bottom);
 
-    // Collision
     if (
       bird.x + bird.r > pipe.x &&
       bird.x - bird.r < pipe.x + pipe.width &&
@@ -81,10 +80,13 @@ function updateGame() {
     endGame();
   }
 
-  // Score
   ctx.fillStyle = "white";
   ctx.font = "24px Segoe UI";
   ctx.fillText("Очки: " + score, 10, 30);
+}
+
+function flap() {
+  velocity = -8;
 }
 
 function endGame() {
@@ -93,6 +95,5 @@ function endGame() {
   document.getElementById("game-over").style.display = "flex";
 }
 
-document.addEventListener("keydown", () => {
-  velocity = -8;
-});
+document.addEventListener("keydown", flap);
+document.getElementById("touch-btn").addEventListener("touchstart", flap);

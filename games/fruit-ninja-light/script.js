@@ -1,26 +1,27 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
 let fruits = [];
 let score = 0;
-let isMouseDown = false;
-let mouseTrail = [];
+let isTouchActive = false;
+let touchTrail = [];
 
-// Завантаження зображень
 const fruitImages = [
-  "apple.png", "banana.png", "watermelon.png", "orange.png", "kiwi.png"
-].map(name => {
+  "images/apple.png", "images/banana.png", "images/watermelon.png", "images/orange.png", "images/kiwi.png"
+].map(src => {
   const img = new Image();
-  img.src = `images/${name}`;
+  img.src = src;
   return img;
 });
 
-// Фрукт
 class Fruit {
   constructor(x, y, speedX, speedY, image) {
     this.x = x;
     this.y = y;
-    this.radius = 40; // для hitbox
+    this.radius = 40;
     this.speedX = speedX;
     this.speedY = speedY;
     this.image = image;
@@ -30,7 +31,7 @@ class Fruit {
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
-    this.speedY += 0.3; // гравітація
+    this.speedY += 0.4;
   }
 
   draw() {
@@ -41,57 +42,75 @@ class Fruit {
     }
   }
 
-  isHit(mx, my) {
-    const dx = this.x - mx;
-    const dy = this.y - my;
+  isHit(x, y) {
+    const dx = this.x - x;
+    const dy = this.y - y;
     return Math.sqrt(dx * dx + dy * dy) < this.radius;
   }
 }
 
 function spawnFruit() {
   const x = Math.random() * (canvas.width - 100) + 50;
-  const y = canvas.height + 20;
-  const speedX = (Math.random() - 0.5) * 6;
-  const speedY = -8 - Math.random() * 5;
+  const y = canvas.height + 50;
+  const speedX = (Math.random() - 0.5) * 8;
+  const speedY = -12 - Math.random() * 6;
   const image = fruitImages[Math.floor(Math.random() * fruitImages.length)];
   fruits.push(new Fruit(x, y, speedX, speedY, image));
 }
 
-// Миша
-canvas.addEventListener("mousedown", () => isMouseDown = true);
+canvas.addEventListener("mousedown", () => isTouchActive = true);
 canvas.addEventListener("mouseup", () => {
-  isMouseDown = false;
-  mouseTrail = [];
+  isTouchActive = false;
+  touchTrail = [];
 });
-canvas.addEventListener("mousemove", (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  if (isMouseDown) {
-    mouseTrail.push({ x: mx, y: my, time: Date.now() });
+canvas.addEventListener("mousemove", handleMove);
 
-    fruits.forEach(fruit => {
-      if (!fruit.cut && fruit.isHit(mx, my)) {
-        fruit.cut = true;
-        score++;
-      }
-    });
-  }
+canvas.addEventListener("touchstart", e => {
+  isTouchActive = true;
+  e.preventDefault();
 });
+canvas.addEventListener("touchend", () => {
+  isTouchActive = false;
+  touchTrail = [];
+});
+canvas.addEventListener("touchmove", e => {
+  e.preventDefault();
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  handleMove({ clientX: x, clientY: y });
+}, { passive: false });
+
+function handleMove(e) {
+  if (!isTouchActive) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  touchTrail.push({ x, y, time: Date.now() });
+
+  fruits.forEach(f => {
+    if (!f.cut && f.isHit(x, y)) {
+      f.cut = true;
+      score++;
+    }
+  });
+}
 
 function drawTrail() {
   ctx.strokeStyle = "#fff";
   ctx.lineWidth = 3;
   ctx.shadowColor = "#0ff";
-  ctx.shadowBlur = 20;
+  ctx.shadowBlur = 15;
   ctx.beginPath();
-  for (let i = 0; i < mouseTrail.length - 1; i++) {
-    ctx.moveTo(mouseTrail[i].x, mouseTrail[i].y);
-    ctx.lineTo(mouseTrail[i + 1].x, mouseTrail[i + 1].y);
+  for (let i = 0; i < touchTrail.length - 1; i++) {
+    ctx.moveTo(touchTrail[i].x, touchTrail[i].y);
+    ctx.lineTo(touchTrail[i + 1].x, touchTrail[i + 1].y);
   }
   ctx.stroke();
+
   const now = Date.now();
-  mouseTrail = mouseTrail.filter(p => now - p.time < 300);
+  touchTrail = touchTrail.filter(p => now - p.time < 300);
 }
 
 function drawScore() {
@@ -99,20 +118,20 @@ function drawScore() {
   ctx.font = "24px Arial";
   ctx.shadowColor = "#0f0";
   ctx.shadowBlur = 10;
-  ctx.fillText(`Очки: ${score}`, 10, 30);
+  ctx.fillText(`Очки: ${score}`, 20, 30);
 }
 
 function update() {
-  if (Math.random() < 0.02) spawnFruit();
+  if (Math.random() < 0.025) spawnFruit();
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  fruits.forEach(f => {
-    f.update();
-    f.draw();
+  fruits.forEach(fruit => {
+    fruit.update();
+    fruit.draw();
   });
 
-  fruits = fruits.filter(f => f.y < canvas.height + 50 && !f.cut);
+  fruits = fruits.filter(f => f.y < canvas.height + 60 && !f.cut);
 
   drawTrail();
   drawScore();

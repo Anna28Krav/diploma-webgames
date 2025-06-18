@@ -1,6 +1,10 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// Адаптивний розмір canvas
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight * 0.6;
+
 const frog = new Image();
 frog.src = "frog.png";
 
@@ -29,8 +33,8 @@ function startGame() {
   let logs = [];
 
   const player = {
-    x: 400,
-    y: 400,
+    x: canvas.width / 2 - 25,
+    y: canvas.height - 60,
     width: 50,
     height: 50,
     dy: 0,
@@ -52,14 +56,19 @@ function startGame() {
   function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Гравітація
     player.y += player.dy;
     player.dy += 0.5;
 
-    if (player.y + player.height > canvas.height)
+    // Не падає нижче
+    if (player.y + player.height > canvas.height) {
       player.y = canvas.height - player.height;
+      player.dy = 0;
+    }
 
     player.onLog = false;
 
+    // КОЛОДИ
     for (let log of logs) {
       log.x += log.speed;
       if (log.x > canvas.width) log.x = -log.width;
@@ -78,8 +87,10 @@ function startGame() {
       }
     }
 
+    // ЖАБКА
     ctx.drawImage(frog, player.x, player.y, player.width, player.height);
 
+    // ЗІРКИ
     let allCollected = true;
     for (let s of stars) {
       if (!s.collected) {
@@ -124,14 +135,20 @@ function startGame() {
     }
   }, 1000);
 
+  // Керування з клавіатури
   document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") player.x -= 20;
     if (e.key === "ArrowRight") player.x += 20;
     if (e.key === "ArrowUp") player.dy = -10;
   });
 
-  // Кількість колод і зірок випадкова
-  const logLevels = [320, 350, 380, 410];
+  // Керування з кнопок
+  document.getElementById("left").addEventListener("click", () => player.x -= 20);
+  document.getElementById("right").addEventListener("click", () => player.x += 20);
+  document.getElementById("up").addEventListener("click", () => player.dy = -10);
+
+  // Створення перешкод і зірок
+  const logLevels = [canvas.height * 0.55, canvas.height * 0.6, canvas.height * 0.65];
   for (let i = 0; i < 6; i++) {
     const y = logLevels[Math.floor(Math.random() * logLevels.length)];
     logs.push(createLog(i * 160, y, 1.5 + Math.random()));

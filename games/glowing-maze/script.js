@@ -6,13 +6,11 @@ let ROWS = 8;
 const CELL_SIZE = 50;
 
 let player, goal, grid, startTime, timerInterval;
-
-// Керування
 let keys = {};
+
 document.addEventListener("keydown", (e) => keys[e.key] = true);
 document.addEventListener("keyup", (e) => keys[e.key] = false);
 
-// Клас клітинки
 class Cell {
   constructor(x, y) {
     this.x = x;
@@ -111,14 +109,13 @@ function startNewGame() {
   clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    document.getElementById("timer").textContent = `⏱ Время: ${elapsed} сек`;
+    document.getElementById("timer").textContent = `⏱ Час: ${elapsed} сек`;
   }, 100);
 
   if (typeof gameLoopId === "number") cancelAnimationFrame(gameLoopId);
   gameLoop();
 }
 
-// Оновлення
 function update() {
   const i = index(player.x, player.y);
   const cell = grid[i];
@@ -141,7 +138,6 @@ function update() {
   }
 }
 
-// Малювання
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let cell of grid) cell.draw();
@@ -164,5 +160,4 @@ function gameLoop() {
   gameLoopId = requestAnimationFrame(gameLoop);
 }
 
-// Запуск за замовчуванням
 setDifficulty("medium");

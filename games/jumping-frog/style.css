@@ -3,6 +3,7 @@ body {
   background: linear-gradient(to top, #004466, #00bbdd);
   font-family: 'Segoe UI', sans-serif;
   overflow: hidden;
+  touch-action: none;
 }
 
 .hud {
@@ -10,7 +11,7 @@ body {
   top: 10px;
   left: 10px;
   color: white;
-  font-size: 20px;
+  font-size: 18px;
   z-index: 2;
 }
 
@@ -21,4 +22,21 @@ canvas {
   background-size: cover;
   border: 2px solid #fff;
   border-radius: 10px;
+  width: 100vw;
+  height: 60vh;
+}
+
+.touch-controls {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.touch-controls button {
+  background-color: #004466;
+  color: white;
+  font-size: 24px;
+  border: 2px solid white;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 10px 20px;
 }

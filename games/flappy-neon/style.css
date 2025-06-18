@@ -49,3 +49,19 @@ button {
 button:hover {
   transform: scale(1.1);
 }
+
+#touch-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #touch-btn {
+    display: block;
+  }
+}

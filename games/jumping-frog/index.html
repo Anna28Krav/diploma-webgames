@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Jumping Frog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -10,7 +11,16 @@
     <div id="time">Time: 60</div>
     <div id="score">Score: 0</div>
   </div>
-  <canvas id="gameCanvas" width="800" height="500"></canvas>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Кнопки керування для мобільного -->
+  <div class="touch-controls">
+    <button id="left">←</button>
+    <button id="up">↑</button>
+    <button id="right">→</button>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>

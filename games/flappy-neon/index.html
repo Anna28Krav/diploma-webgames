@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neon Flappy</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script defer src="game.js"></script>
 </head>
 <body>
   <div id="game-container">
     <canvas id="gameCanvas" width="480" height="640"></canvas>
+
     <div id="start-screen">
       <h1>Neon Flappy</h1>
-      <p class="instructions">Натискай будь-яку клавішу, щоб тримати кульку в повітрі.<br>Уникай перешкод, щоб набирати очки!</p>
+      <p class="instructions">Натискай будь-яку клавішу або кнопку ⬆️, щоб тримати кульку в повітрі.<br>Уникай перешкод, щоб набирати очки!</p>
       <button onclick="startGame()">Почати гру</button>
     </div>
+
     <div id="game-over" style="display:none;">
       <h2>Гру закінчено</h2>
       <p id="score"></p>
       <button onclick="startGame()">Грати знову</button>
     </div>
+
+    <button id="touch-btn" onclick="flap()">⬆️</button>
   </div>
 </body>
 </html>
