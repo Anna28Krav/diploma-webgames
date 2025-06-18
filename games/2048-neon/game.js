@@ -33,7 +33,10 @@ function updateGrid(mergedCells = []) {
       if (mergedCells.some(pos => pos.r === r && pos.c === c)) {
         cell.classList.add("tile-merged");
       }
-      if (grid[r][c] !== 0) cell.innerText = grid[r][c];
+      if (grid[r][c] !== 0) {
+        cell.innerText = grid[r][c];
+        cell.setAttribute("data-value", grid[r][c]);
+      }
       gridContainer.appendChild(cell);
     }
   }
@@ -91,5 +94,15 @@ document.addEventListener("keydown", e => {
     case "ArrowDown": handleMove(3); break;
   }
 });
+
+// 👇 Підтримка мобільних кнопок
+function move(direction) {
+  switch (direction) {
+    case "ArrowLeft": handleMove(0); break;
+    case "ArrowUp": handleMove(1); break;
+    case "ArrowRight": handleMove(2); break;
+    case "ArrowDown": handleMove(3); break;
+  }
+}
 
 startGame();

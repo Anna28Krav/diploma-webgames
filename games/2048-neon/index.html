@@ -1,19 +1,84 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>2048 Neon</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script defer src="game.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
+      overflow-y: auto;
+      touch-action: manipulation;
+    }
+
+    #game-container {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #111;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tile {
+      width: 80px;
+      height: 80px;
+      font-size: 24px;
+      background: #222;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+
+    #controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    #controls button {
+      font-size: 24px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #444;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
   <div id="game-container">
     <h1>2048 Neon</h1>
-    <p class="instructions">Об'єднуй однакові плитки за допомогою стрілок на клавіатурі. Досягни 2048!</p>
+    <p class="instructions">Об'єднуй однакові плитки за допомогою стрілок на клавіатурі або кнопок нижче. Досягни 2048!</p>
     <div id="grid"></div>
     <div id="score">Очки: 0</div>
     <button onclick="startGame()">Нова гра</button>
+
+    <!-- Контроль для мобільних -->
+    <div id="controls">
+      <button onclick="move('ArrowUp')">⬆️</button>
+      <button onclick="move('ArrowLeft')">⬅️</button>
+      <button onclick="move('ArrowDown')">⬇️</button>
+      <button onclick="move('ArrowRight')">➡️</button>
+    </div>
   </div>
 </body>
 </html>
