@@ -1,7 +1,7 @@
-// Завантаження ігор з localStorage
-let allGames = JSON.parse(localStorage.getItem("adminGames")) || [];
+import { loadGames, updateGame } from "./firebase-games.js";
 
-// Рендер карток ігор (з заставкою, лайками та кнопкою "Грати")
+let allGames = [];
+
 function renderGames(games, containerId) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
@@ -18,7 +18,7 @@ function renderGames(games, containerId) {
       ${coverHTML}
       <h3>${game.title}</h3>
       <p>${game.description}</p>
-      <button class="like-btn" data-title="${game.title}">❤️ ${game.likes}</button><br>
+      <button class="like-btn" data-id="${game.id}" data-likes="${game.likes}">❤️ ${game.likes}</button><br>
       <a href="${game.url}" target="_blank" class="cta">Грати</a>
     `;
 
@@ -26,7 +26,6 @@ function renderGames(games, containerId) {
   });
 }
 
-// Топ 3 гри за кількістю лайків
 function updateTopGames() {
   const sorted = [...allGames]
     .sort((a, b) => b.likes - a.likes)
@@ -34,7 +33,6 @@ function updateTopGames() {
   renderGames(sorted, "topGames");
 }
 
-// Фільтрація ігор за текстом і категорією
 function updateAllGames(filterText = "", category = "all") {
   const filtered = allGames.filter(game =>
     game.title.toLowerCase().includes(filterText.toLowerCase()) &&
@@ -43,36 +41,35 @@ function updateAllGames(filterText = "", category = "all") {
   renderGames(filtered, "allGames");
 }
 
-// Прив’язка подій до інтерфейсу
 function attachEvents() {
   const searchInput = document.getElementById("searchInput");
   const categoryFilter = document.getElementById("categoryFilter");
 
   searchInput.addEventListener("input", () => {
-    const text = searchInput.value;
-    const category = categoryFilter.value;
-    updateAllGames(text, category);
+    updateAllGames(searchInput.value, categoryFilter.value);
   });
 
   categoryFilter.addEventListener("change", () => {
-    const category = categoryFilter.value;
-    const text = searchInput.value;
-    updateAllGames(text, category);
+    updateAllGames(searchInput.value, categoryFilter.value);
   });
 
-  document.addEventListener("click", e => {
+  document.addEventListener("click", async (e) => {
     if (e.target.classList.contains("like-btn")) {
-      const title = e.target.dataset.title;
-      const game = allGames.find(g => g.title === title);
-      game.likes++;
-      localStorage.setItem("adminGames", JSON.stringify(allGames));
+      const id = e.target.dataset.id;
+      const game = allGames.find(g => g.id === id);
+      game.likes += 1;
+      await updateGame(id, { likes: game.likes });
       e.target.innerText = `❤️ ${game.likes}`;
       updateTopGames();
     }
   });
 }
 
-// Ініціалізація
-updateTopGames();
-updateAllGames();
-attachEvents();
+async function init() {
+  allGames = await loadGames();
+  updateTopGames();
+  updateAllGames();
+  attachEvents();
+}
+
+init();

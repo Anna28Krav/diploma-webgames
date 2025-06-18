@@ -1,17 +1,12 @@
-// Отримати список ігор з localStorage
-let adminGames = JSON.parse(localStorage.getItem("adminGames")) || [];
+import { addGame, loadGames, deleteGameById, updateGame } from "./firebase-games.js";
 
-// Зберегти в localStorage
-function saveGames() {
-  localStorage.setItem("adminGames", JSON.stringify(adminGames));
-}
-
-// Відобразити ігри
-function renderAdminGames() {
+async function renderAdminGames() {
   const container = document.getElementById("adminGames");
   container.innerHTML = "";
 
-  adminGames.forEach((game, index) => {
+  const games = await loadGames();
+
+  games.forEach(game => {
     const card = document.createElement("div");
     card.className = "game-card";
 
@@ -25,8 +20,8 @@ function renderAdminGames() {
       <p>${game.description}</p>
       <small>Категорія: ${game.category}</small>
       <div class="admin-buttons">
-        <button onclick="editGame(${index})">✏️</button>
-        <button onclick="deleteGame(${index})">🗑️</button>
+        <button onclick="editGame('${game.id}')">✏️</button>
+        <button onclick="deleteGame('${game.id}')">🗑️</button>
       </div>
     `;
 
@@ -34,37 +29,30 @@ function renderAdminGames() {
   });
 }
 
-// Редагування гри
-function editGame(index) {
-  const game = adminGames[index];
+window.editGame = async function(id) {
+  const games = await loadGames();
+  const game = games.find(g => g.id === id);
   document.getElementById("title").value = game.title;
   document.getElementById("description").value = game.description;
   document.getElementById("url").value = game.url;
   document.getElementById("category").value = game.category;
-  deleteGame(index); // Видалити стару версію для оновлення
-}
+  await deleteGameById(id); // Видалення для редагування
+  await renderAdminGames();
+};
 
-// Видалення гри
-function deleteGame(index) {
-  adminGames.splice(index, 1);
-  saveGames();
-  renderAdminGames();
-}
+window.deleteGame = async function(id) {
+  await deleteGameById(id);
+  await renderAdminGames();
+};
 
-// Додавання гри через форму
-function handleFormSubmit(e) {
+document.getElementById("gameForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const coverFile = document.getElementById("cover").files[0];
-
-  if (!coverFile) {
-    alert("Оберіть заставку гри!");
-    return;
-  }
+  if (!coverFile) return alert("Оберіть заставку гри!");
 
   const reader = new FileReader();
-
-  reader.onload = function () {
+  reader.onload = async function () {
     const coverDataURL = reader.result;
 
     const newGame = {
@@ -72,21 +60,15 @@ function handleFormSubmit(e) {
       description: document.getElementById("description").value.trim(),
       url: document.getElementById("url").value.trim(),
       category: document.getElementById("category").value,
-      cover: coverDataURL, // base64 заставка
+      cover: coverDataURL,
       likes: 0
     };
 
-    adminGames.push(newGame);
-    saveGames();
-    renderAdminGames();
-    e.target.reset(); // Очистити форму
+    await addGame(newGame);
+    await renderAdminGames();
+    e.target.reset();
   };
+  reader.readAsDataURL(coverFile);
+});
 
-  reader.readAsDataURL(coverFile); // Прочитати файл заставки
-}
-
-// Прив'язка обробника події
-document.getElementById("gameForm").addEventListener("submit", handleFormSubmit);
-
-// Відобразити ігри на старті
 renderAdminGames();

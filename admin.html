@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GameVerse – Адмін Панель</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="admin.js"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
+  <!-- Ваші модулі -->
+  <script type="module" src="./firebase-config.js"></script>
+  <script type="module" src="./firebase-games.js"></script>
+  <script type="module" src="./admin.js"></script>
 </head>
 <body>
   <header class="hero small">
@@ -19,8 +27,7 @@
       <input type="text" id="title" placeholder="Назва гри" required>
       <input type="text" id="description" placeholder="Опис" required>
       <input type="text" id="url" placeholder="Посилання на гру" required>
-      
-      <!-- ДОДАНО: поле для заставки гри -->
+
       <label for="cover">Завантажити заставку гри:</label>
       <input type="file" id="cover" accept="image/*" required>
 
@@ -29,8 +36,8 @@
         <option value="logic">Головоломка</option>
         <option value="retro">Ретро</option>
         <option value="classic">Класика</option>
-
       </select>
+
       <button type="submit">Додати гру</button>
     </form>
 

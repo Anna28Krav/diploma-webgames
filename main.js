@@ -1,24 +1,40 @@
-// ======= ІГРИ З LOCALSTORAGE =======
-let allGames = JSON.parse(localStorage.getItem("adminGames")) || [];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  updateDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
 
-// ======= HTML-КОНТЕЙНЕР =======
+// 1. Ініціалізація Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 2. Контейнер
 const topContainer = document.querySelector(".game-grid.top");
 
-// ======= ВІДОБРАЖЕННЯ ТОПОВИХ ІГОР =======
-function renderTopGames() {
-  // Перевірка на наявність контейнера
-  if (!topContainer) return;
+// 3. Завантаження ігор з Firestore
+async function loadTopGames() {
+  const snapshot = await getDocs(collection(db, "games"));
+  const games = [];
+  snapshot.forEach(docSnap => {
+    games.push({ id: docSnap.id, ...docSnap.data() });
+  });
 
-  // Очищення
+  // Вибір топ-3
+  const topGames = games.sort((a, b) => (b.likes || 0) - (a.likes || 0)).slice(0, 3);
+
+  renderTopGames(topGames);
+}
+
+// 4. Рендер карток
+function renderTopGames(games) {
+  if (!topContainer) return;
   topContainer.innerHTML = "";
 
-  // Сортування за лайками та вибір топ-3
-  const topGames = [...allGames]
-    .sort((a, b) => b.likes - a.likes)
-    .slice(0, 3);
-
-  // Рендер кожної гри
-  topGames.forEach(game => {
+  games.forEach(game => {
     const card = document.createElement("div");
     card.className = "game-card";
 
@@ -30,7 +46,7 @@ function renderTopGames() {
       ${cover}
       <h3>${game.title}</h3>
       <p>${game.description}</p>
-      <button class="like-btn" data-title="${game.title}">❤️ ${game.likes}</button><br>
+      <button class="like-btn" data-id="${game.id}" data-likes="${game.likes || 0}">❤️ ${game.likes || 0}</button><br>
       <a href="${game.url}" target="_blank" class="cta">Грати</a>
     `;
 
@@ -38,18 +54,19 @@ function renderTopGames() {
   });
 }
 
-// ======= ОБРОБКА ЛАЙКІВ =======
-document.addEventListener("click", e => {
+// 5. Обробка лайків
+document.addEventListener("click", async (e) => {
   if (e.target.classList.contains("like-btn")) {
-    const title = e.target.dataset.title;
-    const game = allGames.find(g => g.title === title);
-    if (game) {
-      game.likes = (game.likes || 0) + 1;
-      localStorage.setItem("adminGames", JSON.stringify(allGames));
-      renderTopGames(); // оновити топ без перезавантаження
-    }
+    const id = e.target.dataset.id;
+    let likes = parseInt(e.target.dataset.likes || "0");
+    likes++;
+
+    await updateDoc(doc(db, "games", id), { likes });
+
+    // Повторно завантажити топ-ігри
+    await loadTopGames();
   }
 });
 
-// ======= ПЕРШЕ ЗАВАНТАЖЕННЯ =======
-renderTopGames();
+// 6. Запуск
+loadTopGames();
