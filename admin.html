@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GameVerse – Адмін Панель</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 
   <!-- 🔐 Перевірка доступу -->
   <script>
@@ -18,7 +18,7 @@
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"></script>
 
-  <!-- Ваші модулі -->
+  <!-- 🧩 Ваші модулі -->
   <script type="module" src="./firebase-config.js"></script>
   <script type="module" src="./firebase-games.js"></script>
   <script type="module" src="./admin.js"></script>
@@ -27,18 +27,18 @@
   <header class="hero small">
     <h1>🎮 Адмін Панель GameVerse</h1>
     <p class="subtitle">Додати, редагувати або видалити ігри</p>
-    <button onclick="logout()">🚪 Вийти</button>
+    <button id="logout-btn">🚪 Вийти</button>
   </header>
 
   <section class="admin-section">
     <h2>➕ Додати Гру</h2>
     <form id="gameForm">
-      <input type="text" id="title" placeholder="Назва гри" required>
-      <input type="text" id="description" placeholder="Опис" required>
-      <input type="text" id="url" placeholder="Посилання на гру" required>
+      <input type="text" id="title" placeholder="Назва гри" required />
+      <input type="text" id="description" placeholder="Опис" required />
+      <input type="text" id="url" placeholder="Посилання на гру" required />
 
       <label for="cover">Завантажити заставку гри:</label>
-      <input type="file" id="cover" accept="image/*" required>
+      <input type="file" id="cover" accept="image/*" required />
 
       <select id="category">
         <option value="arcade">Аркада</option>
@@ -58,12 +58,12 @@
     <p>&copy; 2025 Kravchenko Anna. Панель адміністратора</p>
   </footer>
 
-  <!-- 🔁 Вихід -->
+  <!-- 🔁 Вихід з адмінки -->
   <script>
-    function logout() {
+    document.getElementById("logout-btn").addEventListener("click", () => {
       localStorage.removeItem("isAdmin");
       window.location.href = "admin-login.html";
-    }
+    });
   </script>
 </body>
 </html>

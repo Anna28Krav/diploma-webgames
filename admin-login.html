@@ -3,31 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Вхід до Адмінки</title>
+  <title>Увійти як адміністратор</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="login-container">
-    <h2>🔐 Вхід до адміністративної панелі</h2>
-    <input type="text" id="username" placeholder="Логін" />
-    <input type="password" id="password" placeholder="Пароль" />
-    <button onclick="login()">Увійти</button>
-    <p id="login-error" style="color: red;"></p>
-  </div>
+  <header class="hero small">
+    <h1>🔐 Вхід адміністратора</h1>
+    <p class="subtitle">Введіть ваш email для входу</p>
+  </header>
 
-  <script>
-    function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
+  <section class="admin-section">
+    <form id="adminLoginForm">
+      <input type="email" id="adminEmail" placeholder="Введіть email" required>
+      <button type="submit">Увійти</button>
+    </form>
+    <p id="loginError" style="color: red; display: none;">⛔ Доступ заборонено</p>
+  </section>
 
-      // Простий варіант — фіксовані логін і пароль
-      if (user === 'admin' && pass === '1234') {
-        localStorage.setItem('isAdmin', 'true');
-        window.location.href = 'admin.html';
-      } else {
-        document.getElementById('login-error').innerText = 'Невірний логін або пароль';
-      }
-    }
-  </script>
+  <footer>
+    <p>&copy; 2025 Kravchenko Anna. Вхід адміністратора</p>
+  </footer>
+
+  <script src="admin-login.js"></script>
 </body>
 </html>

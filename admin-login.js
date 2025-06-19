@@ -1,35 +1,17 @@
-/*
-// admin-login.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
+document.getElementById("adminLoginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  const allowedEmails = [
+    "anna611552@gmail.com",
+    "diplom20251111@gmail.com"
+  ];
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) return;
+  const enteredEmail = document.getElementById("adminEmail").value.trim().toLowerCase();
 
-  try {
-    const q = query(collection(db, "adminRequests"), where("email", "==", user.email));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      const request = querySnapshot.docs[0].data();
-      if (request.status === "підтверджено") {
-        window.location.href = "admin.html";
-      } else {
-        alert("Вашу заявку ще не підтверджено.");
-      }
-    } else {
-      alert("Заявки не знайдено.");
-    }
-  } catch (error) {
-    console.error("Помилка перевірки адміна:", error);
-    alert("Помилка авторизації. Спробуйте ще раз.");
+  if (allowedEmails.includes(enteredEmail)) {
+    localStorage.setItem("isAdmin", "true");
+    window.location.href = "admin.html"; // переход в адмінку
+  } else {
+    document.getElementById("loginError").style.display = "block";
   }
 });
-
-*/
