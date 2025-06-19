@@ -1,3 +1,4 @@
+// script.js
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -10,7 +11,11 @@ let isTouchActive = false;
 let touchTrail = [];
 
 const fruitImages = [
-  "images/apple.png", "images/banana.png", "images/watermelon.png", "images/orange.png", "images/kiwi.png"
+  "images/apple.png",
+  "images/banana.png",
+  "images/watermelon.png",
+  "images/orange.png",
+  "images/kiwi.png"
 ].map(src => {
   const img = new Image();
   img.src = src;
@@ -31,7 +36,7 @@ class Fruit {
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
-    this.speedY += 0.4;
+    this.speedY += 0.35; // slightly increased gravity
   }
 
   draw() {
@@ -53,7 +58,7 @@ function spawnFruit() {
   const x = Math.random() * (canvas.width - 100) + 50;
   const y = canvas.height + 50;
   const speedX = (Math.random() - 0.5) * 8;
-  const speedY = -12 - Math.random() * 6;
+  const speedY = -18 - Math.random() * 10; // increased jump height
   const image = fruitImages[Math.floor(Math.random() * fruitImages.length)];
   fruits.push(new Fruit(x, y, speedX, speedY, image));
 }
@@ -122,7 +127,7 @@ function drawScore() {
 }
 
 function update() {
-  if (Math.random() < 0.025) spawnFruit();
+  if (Math.random() < 0.03) spawnFruit(); // slightly more frequent
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 

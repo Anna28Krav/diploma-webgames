@@ -35,7 +35,7 @@ function endGame() {
 function spawnTarget() {
   const target = document.createElement("div");
   target.className = "target";
-  const size = parseInt(getComputedStyle(target).width);
+  const size = 40;
   const x = Math.random() * (field.clientWidth - size);
   const y = Math.random() * (field.clientHeight - size);
   target.style.left = `${x}px`;
@@ -48,7 +48,6 @@ function spawnTarget() {
   };
 
   field.appendChild(target);
-
   setTimeout(() => {
     if (field.contains(target)) field.removeChild(target);
   }, 1500);

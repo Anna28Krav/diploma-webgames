@@ -1,58 +1,62 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space Invaders Light</title>
+  <title>🛸 Space Invaders Light</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       background: black;
-      color: lime;
       font-family: monospace;
+      color: lime;
       text-align: center;
-      overflow: hidden;
+      padding: 10px;
     }
 
     h1 {
-      margin: 10px;
       text-shadow: 0 0 10px lime;
+      margin-bottom: 5px;
     }
 
     #score {
-      font-size: 18px;
-      margin-bottom: 10px;
       color: yellow;
+      font-size: 20px;
+      margin-bottom: 10px;
     }
 
     canvas {
-      background-color: #000;
+      background: #000;
+      border-radius: 10px;
       box-shadow: 0 0 20px lime;
-      border-radius: 8px;
       width: 95vw;
       max-width: 600px;
-      height: auto;
-      aspect-ratio: 3 / 2;
+      aspect-ratio: 3/2;
       image-rendering: pixelated;
     }
 
     .controls {
+      margin-top: 15px;
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin: 10px 0;
+      gap: 15px;
       flex-wrap: wrap;
     }
 
     .btn {
-      font-size: 26px;
       width: 60px;
       height: 60px;
+      font-size: 28px;
       background: black;
-      border: 2px solid lime;
       color: lime;
+      border: 2px solid lime;
       border-radius: 12px;
       box-shadow: 0 0 10px lime;
+      user-select: none;
     }
   </style>
 </head>
@@ -61,7 +65,6 @@
   <div id="score">Очки: 0</div>
   <canvas id="gameCanvas" width="600" height="400"></canvas>
 
-  <!-- Сенсорне керування -->
   <div class="controls">
     <button class="btn" onclick="move('left')">⬅️</button>
     <button class="btn" onclick="shoot()">🔫</button>
@@ -78,7 +81,7 @@
       y: canvas.height - 30,
       width: 40,
       height: 10,
-      speed: 5,
+      speed: 10, // 🔼 швидкість гравця збільшена
       bullets: []
     };
 
@@ -87,20 +90,19 @@
     let keys = {};
     let score = 0;
 
-    // Події клавіатури
     document.addEventListener("keydown", (e) => keys[e.key] = true);
     document.addEventListener("keyup", (e) => keys[e.key] = false);
 
-    // Функції для мобільних кнопок
+    // мобільне керування
     function move(dir) {
-      if (dir === "left") player.x -= player.speed * 2;
-      if (dir === "right") player.x += player.speed * 2;
+      if (dir === "left") player.x -= player.speed;
+      if (dir === "right") player.x += player.speed;
       player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
     }
 
     function shoot() {
       if (player.bullets.length < 5) {
-        player.bullets.push({ x: player.x + player.width / 2, y: player.y });
+        player.bullets.push({ x: player.x + player.width / 2 - 1, y: player.y });
       }
     }
 
@@ -147,7 +149,7 @@
       player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
 
       if (keys[" "] && player.bullets.length < 5) {
-        player.bullets.push({ x: player.x + player.width / 2, y: player.y });
+        shoot();
         keys[" "] = false;
       }
 
