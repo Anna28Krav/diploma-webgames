@@ -11,10 +11,8 @@
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js"></script>
 
-  <!-- Модулі -->
+  <!-- Firebase конфіг -->
   <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="main.js"></script>
-  <script type="module" src="admin-login.js"></script>
 
   <style>
     #adminLoginBtn {
@@ -47,7 +45,7 @@
     <p>&copy; 2025 Kravchenko Anna. Усі права захищені.</p>
   </footer>
 
-  <!-- Firebase авторизація -->
+  <!-- Авторизація Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -55,31 +53,34 @@
     import { firebaseConfig } from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
-    const db = getFirestore();
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    const adminLoginBtn = document.getElementById('adminLoginBtn');
-    adminLoginBtn?.addEventListener('click', async () => {
+    const allowedAdmins = ["anna611552@gmail.com", "diplom20251111@gmail.com"];
+
+    document.getElementById("adminLoginBtn").addEventListener("click", async () => {
       const provider = new GoogleAuthProvider();
+
       try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
-        if (user.email === "ann611552@gmail.com") {
-          alert("Ви увійшли як адміністратор.");
+        if (allowedAdmins.includes(user.email)) {
+          localStorage.setItem("isAdmin", "true");
           window.location.href = "admin.html";
         } else {
           await addDoc(collection(db, "adminRequests"), {
             email: user.email,
             timestamp: new Date().toISOString(),
-            status: "очікує"
+            status: "очікує підтвердження"
           });
           alert("Ваш запит на адміністрування відправлено. Ми зв’яжемось з вами після підтвердження.");
           await signOut(auth);
         }
-      } catch (error) {
-        console.error("Помилка входу:", error);
-        alert("Помилка авторизації: " + error.message);
+
+      } catch (err) {
+        console.error("Помилка авторизації:", err);
+        alert("Помилка входу: " + err.message);
       }
     });
   </script>
