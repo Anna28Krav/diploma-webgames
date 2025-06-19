@@ -13,7 +13,7 @@ function jump() {
   let position = 0;
 
   const upInterval = setInterval(() => {
-    if (position >= 15) {
+    if (position >= 35) {
       clearInterval(upInterval);
       const downInterval = setInterval(() => {
         if (position <= 0) {
