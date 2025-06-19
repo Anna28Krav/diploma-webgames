@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вхід до Адмінки</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>🔐 Вхід до адміністративної панелі</h2>
+    <input type="text" id="username" placeholder="Логін" />
+    <input type="password" id="password" placeholder="Пароль" />
+    <button onclick="login()">Увійти</button>
+    <p id="login-error" style="color: red;"></p>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+
+      // Простий варіант — фіксовані логін і пароль
+      if (user === 'admin' && pass === '1234') {
+        localStorage.setItem('isAdmin', 'true');
+        window.location.href = 'admin.html';
+      } else {
+        document.getElementById('login-error').innerText = 'Невірний логін або пароль';
+      }
+    }
+  </script>
+</body>
+</html>

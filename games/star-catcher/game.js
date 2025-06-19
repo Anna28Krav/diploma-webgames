@@ -1,3 +1,4 @@
+// game.js
 let score = 0;
 let timeLeft = 60;
 let gameInterval;
@@ -23,7 +24,16 @@ function startGame() {
   }, 1000);
 }
 
-// 🔁 Плавний рух їжачка пальцем (drag по екрану)
+function moveLeft() {
+  const left = parseInt(hedgehog.style.left || "50%");
+  hedgehog.style.left = `${Math.max(0, left - 40)}px`;
+}
+
+function moveRight() {
+  const left = parseInt(hedgehog.style.left || "50%");
+  hedgehog.style.left = `${Math.min(gameArea.clientWidth - 80, left + 40)}px`;
+}
+
 gameArea.addEventListener("touchmove", e => {
   const touch = e.touches[0];
   const rect = gameArea.getBoundingClientRect();

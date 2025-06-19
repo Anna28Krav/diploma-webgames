@@ -1,3 +1,4 @@
+/* style.css */
 body {
   margin: 0;
   background: linear-gradient(to top, #0f0c29, #302b63);
@@ -16,7 +17,7 @@ body {
   color: #ccc;
 }
 
-#score {
+#score, #timer {
   font-size: 18px;
   color: #0ff;
   margin-bottom: 10px;

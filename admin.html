@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GameVerse – Адмін Панель</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- 🔐 Перевірка доступу -->
+  <script>
+    if (localStorage.getItem('isAdmin') !== 'true') {
+      window.location.href = 'admin-login.html';
+    }
+  </script>
 
   <!-- Firebase SDK -->
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"></script>
 
   <!-- Ваші модулі -->
   <script type="module" src="./firebase-config.js"></script>
@@ -17,8 +25,9 @@
 </head>
 <body>
   <header class="hero small">
-    <h1>Адмін Панель</h1>
+    <h1>🎮 Адмін Панель GameVerse</h1>
     <p class="subtitle">Додати, редагувати або видалити ігри</p>
+    <button onclick="logout()">🚪 Вийти</button>
   </header>
 
   <section class="admin-section">
@@ -48,5 +57,13 @@
   <footer>
     <p>&copy; 2025 Kravchenko Anna. Панель адміністратора</p>
   </footer>
+
+  <!-- 🔁 Вихід -->
+  <script>
+    function logout() {
+      localStorage.removeItem("isAdmin");
+      window.location.href = "admin-login.html";
+    }
+  </script>
 </body>
 </html>
