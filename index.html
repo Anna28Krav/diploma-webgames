@@ -11,7 +11,7 @@
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
   <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js"></script>
 
-  <!-- Firebase конфіг -->
+  <!-- Конфіг Firebase -->
   <script type="module" src="firebase-config.js"></script>
 
   <style>
@@ -45,7 +45,7 @@
     <p>&copy; 2025 Kravchenko Anna. Усі права захищені.</p>
   </footer>
 
-  <!-- Авторизація Firebase -->
+  <!-- Авторизація адміністратора -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -84,5 +84,8 @@
       }
     });
   </script>
+
+  <!-- 📥 Основний скрипт для виводу топ-ігор -->
+  <script type="module" src="main.js"></script>
 </body>
 </html>
