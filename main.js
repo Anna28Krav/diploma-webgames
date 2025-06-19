@@ -1,3 +1,4 @@
+// Імпортуємо Firebase модулі
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
@@ -6,30 +7,35 @@ import {
   updateDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 import { firebaseConfig } from "./firebase-config.js";
 
 // 1. Ініціалізація Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 2. Контейнер
-const topContainer = document.querySelector(".game-grid.top");
+// 2. Контейнер для топ-ігор
+const topContainer = document.getElementById("topGames");
 
 // 3. Завантаження ігор з Firestore
 async function loadTopGames() {
-  const snapshot = await getDocs(collection(db, "games"));
-  const games = [];
-  snapshot.forEach(docSnap => {
-    games.push({ id: docSnap.id, ...docSnap.data() });
-  });
+  try {
+    const snapshot = await getDocs(collection(db, "games"));
+    const games = [];
+    snapshot.forEach(docSnap => {
+      games.push({ id: docSnap.id, ...docSnap.data() });
+    });
 
-  // Вибір топ-3
-  const topGames = games.sort((a, b) => (b.likes || 0) - (a.likes || 0)).slice(0, 3);
+    // Сортуємо за лайками і обираємо топ-3
+    const topGames = games.sort((a, b) => (b.likes || 0) - (a.likes || 0)).slice(0, 3);
 
-  renderTopGames(topGames);
+    renderTopGames(topGames);
+  } catch (err) {
+    console.error("Помилка при завантаженні ігор:", err);
+  }
 }
 
-// 4. Рендер карток
+// 4. Рендер карток ігор
 function renderTopGames(games) {
   if (!topContainer) return;
   topContainer.innerHTML = "";
@@ -46,7 +52,9 @@ function renderTopGames(games) {
       ${cover}
       <h3>${game.title}</h3>
       <p>${game.description}</p>
-      <button class="like-btn" data-id="${game.id}" data-likes="${game.likes || 0}">❤️ ${game.likes || 0}</button><br>
+      <button class="like-btn" data-id="${game.id}" data-likes="${game.likes || 0}">
+        ❤️ ${game.likes || 0}
+      </button><br>
       <a href="${game.url}" target="_blank" class="cta">Грати</a>
     `;
 
@@ -58,15 +66,21 @@ function renderTopGames(games) {
 document.addEventListener("click", async (e) => {
   if (e.target.classList.contains("like-btn")) {
     const id = e.target.dataset.id;
-    let likes = parseInt(e.target.dataset.likes || "0");
+    let likes = parseInt(e.target.dataset.likes || "0", 10);
     likes++;
 
-    await updateDoc(doc(db, "games", id), { likes });
+    try {
+      // Оновлення в базі
+      await updateDoc(doc(db, "games", id), { likes });
 
-    // Повторно завантажити топ-ігри
-    await loadTopGames();
+      // Миттєве оновлення тексту кнопки
+      e.target.textContent = `❤️ ${likes}`;
+      e.target.dataset.likes = likes.toString();
+    } catch (err) {
+      console.error("Помилка при оновленні лайків:", err);
+    }
   }
 });
 
-// 6. Запуск
+// 6. Старт
 loadTopGames();
